@@ -20,6 +20,14 @@ if __name__ == "__main__":
 
         hum.printHumidity(ipcon)
 
+
+
+
+
+        
+
+    except Exception:
+        print(Exception.with_traceback)
     except: 
         print("Something went wrong.")
         

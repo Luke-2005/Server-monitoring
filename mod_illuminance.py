@@ -11,7 +11,7 @@ def cb_illuminance(illuminance):
     print("Too bright, close the curtains!")
 
 
-def monitorIlluminance(ipcon):
+def monitorIlluminance(ipcon, threshold):
     al = BrickletAmbientLightV3("Pdw", ipcon) # Create device object
 
     # Register illuminance callback to function cb_illuminance
@@ -19,6 +19,8 @@ def monitorIlluminance(ipcon):
 
     # Configure threshold for illuminance "greater than 500 lx"
     # with a debounce period of 1s (1000ms)
-    al.set_illuminance_callback_configuration(1000, False, ">", 20*100, 0)
+    al.set_illuminance_callback_configuration(1000, False, ">", threshold, 0)
 
-
+def getIlluminance(ipcon):
+    al = BrickletAmbientLightV3("Pdw", ipcon)
+    return al.get_illuminance()
