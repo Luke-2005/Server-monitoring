@@ -16,10 +16,9 @@ if __name__ == "__main__":
     #exec all our code in try catch, so con gets closed reliably
     try:
 
-        temp.printTemperatur(ipcon)
+        temp.printTemperature(ipcon)
 
         hum.printHumidity(ipcon)
-
 
 
 
