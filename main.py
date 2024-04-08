@@ -5,6 +5,9 @@ PORT = 4223
 from tinkerforge.ip_connection import IPConnection
 import mod_humidity as hum
 import mod_temperature as temp
+import mod_dualButton as dButton
+import mod_rgbButton as rgbButton
+import mod_segDisplay as segDisp
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
@@ -18,10 +21,10 @@ if __name__ == "__main__":
 
         temp.printTemperature(ipcon)
 
+        
         hum.printHumidity(ipcon)
 
-
-
+        segDisp.setTime(ipcon)
 
 
 
