@@ -12,6 +12,10 @@ import mod_segDisplay as segDisp
 
 ipcon = ""
 
+#Booleans
+Watching = False #Alarm Scharf
+Alert = False #Alarm Ausgelöst
+
 def callback_DualButton(button_l, button_r, led_l, led_r):
     if button_l == BrickletDualButtonV2.BUTTON_STATE_PRESSED:
         print("Left Button: Pressed")
@@ -47,10 +51,10 @@ def callback_DualButton(button_l, button_r, led_l, led_r):
     elif button_r == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
         print("Right Button: Released")
 
-def callback_AlarmTriggered():
+def callback_AlertTriggered():
     print("Alarm ausgelöst!")
 
-def callback_AlarmEngaged():
+def callback_AlertEngaged():
     print("Alarm scharf")
 
 
