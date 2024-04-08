@@ -12,10 +12,17 @@ if __name__ == "__main__":
 
     ipcon.connect(HOST, PORT) # Connect to brickd
     # Don't use device before ipcon is connected
+    
+    #exec all our code in try catch, so con gets closed reliably
+    try:
 
-    temp.printTemperatur(ipcon)
+        temp.printTemperatur(ipcon)
 
-    hum.printHumidity(ipcon)
+        hum.printHumidity(ipcon)
+
+    except: 
+        print("Something went wrong.")
+        
 
     input("Press key to exit\n") # Use raw_input() in Python 2
 
