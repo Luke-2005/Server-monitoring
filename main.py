@@ -47,6 +47,13 @@ def callback_DualButton(button_l, button_r, led_l, led_r):
     elif button_r == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
         print("Right Button: Released")
 
+def callback_AlarmTriggered():
+    print("Alarm ausgelöst!")
+
+def callback_AlarmEngaged():
+    print("Alarm scharf")
+
+
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
 
