@@ -24,7 +24,8 @@ if __name__ == "__main__":
         
         hum.printHumidity(ipcon)
 
-        segDisp.setTime(ipcon, False)
+        segDisp.setHumidity(ipcon)
+        segDisp.setTemperature(ipcon)
 
 
 
