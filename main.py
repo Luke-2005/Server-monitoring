@@ -24,10 +24,10 @@ if __name__ == "__main__":
 
 
 
-        
 
-    except Exception:
-        print(Exception.with_traceback)
+
+    except Exception as e:
+        print(repr(e))
     except: 
         print("Something went wrong.")
         

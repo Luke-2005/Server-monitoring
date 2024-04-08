@@ -1,0 +1,3 @@
+from tinkerforge.ip_connection import IPConnection
+from tinkerforge.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x7V2
+
