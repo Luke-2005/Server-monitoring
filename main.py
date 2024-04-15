@@ -51,12 +51,27 @@ def callback_DualButton(button_l, button_r, led_l, led_r):
     elif button_r == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
         print("Right Button: Released")
 
+# Callback function for humidity callback
+def callback_humidity(humidity):
+    if Watching:
+        callback_AlertTriggered()
+    print("Humidity above Threshold: " + str(humidity/100.0) + " %RH")
+
+# Callback function for temperature callback
+def callback_temperature(temperature):
+    if Watching:
+        callback_AlertTriggered()
+    print("Temperature above Threshold: " + str(temperature/100.0) + " °C")
+
 def callback_AlertTriggered():
     print("Alarm ausgelöst!")
+    Watching = True
+
 
 def callback_AlertEngaged():
     print("Alarm scharf")
-
+    Alert = True
+    
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
@@ -71,7 +86,8 @@ if __name__ == "__main__":
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
         dButton.bind(ipcon, callback_DualButton)
-
+        hum.bind(ipcon, callback_humidity)
+        temp.bind(ipcon, callback_temperature)
 
     except Exception as e:
         print(repr(e))
@@ -82,6 +98,9 @@ if __name__ == "__main__":
     input("Press key to exit\n") # Use raw_input() in Python 2
 
     dButton.unbind(ipcon)
+    hum.unbind(ipcon)
+    temp.unbind(ipcon)
+    
     ipcon.disconnect()
     
 
