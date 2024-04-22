@@ -14,8 +14,8 @@ def getTemperature(ipcon):
 
 def bind(ipcon, function):
     ptc = BrickletPTCV2("Wcg", ipcon)
-    ptc.register_callback(t.CALLBACK_TEMPERATURE, function)
-    ptc.set_temperature_callback_configuration(10000, False, "x", 40, 500)
+    ptc.register_callback(ptc.CALLBACK_TEMPERATURE, function)
+    ptc.set_temperature_callback_configuration(10000, False, ">", 35 * 100, 500)
 
 def unbind(ipcon):
     ptc = BrickletPTCV2("Wcg", ipcon)

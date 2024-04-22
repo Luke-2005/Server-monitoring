@@ -9,6 +9,7 @@ import mod_temperature as temp
 import mod_dualButton as dButton
 import mod_rgbButton as rgbButton
 import mod_segDisplay as segDisp
+import sys
 
 ipcon = ""
 
@@ -57,11 +58,17 @@ def callback_humidity(humidity):
         callback_AlertTriggered()
     print("Humidity above Threshold: " + str(humidity/100.0) + " %RH")
 
-# Callback function for temperature callback
+# Callback functino for temperature at humidity sensor (as in, internal)
+def callback_humTemp(temperature):
+    if Watching:
+        callback_AlertTriggered()
+    print("Internal Temperature above Threshold: " + str(temperature/100.0) + " °C")
+
+# Callback function for temperature callback of external sensor (die Sonde)
 def callback_temperature(temperature):
     if Watching:
         callback_AlertTriggered()
-    print("Temperature above Threshold: " + str(temperature/100.0) + " °C")
+    print("External Temperature above Threshold: " + str(temperature/100.0) + " °C")
 
 def callback_AlertTriggered():
     print("Alarm ausgelöst!")
@@ -76,17 +83,27 @@ def callback_AlertEngaged():
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
 
-
-    ipcon.connect(HOST, PORT) # Connect to brickd
-    # Don't use device before ipcon is connected
-    
-    #exec all our code in try catch, so con gets closed reliably
     try:
+        ipcon.connect(HOST, PORT)
+    except:
+        print("Unable to connect to Server.")
+        sys.exit()
+
+    #exec all our code in try catch, so con gets closed reliably
+    try: # Connect to brickd
+        # Don't use device before ipcon is connected
 
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
+
+        print("Binding DualButton Bricklet")
         dButton.bind(ipcon, callback_DualButton)
+
+        print("Binding Humidity Bricklet")
         hum.bind(ipcon, callback_humidity)
+        hum.bindTemp(ipcon, callback_humTemp)
+
+        print("Binding Temperature Bricklet")
         temp.bind(ipcon, callback_temperature)
 
     except Exception as e:
@@ -97,11 +114,18 @@ if __name__ == "__main__":
 
     input("Press key to exit\n") # Use raw_input() in Python 2
 
-    dButton.unbind(ipcon)
-    hum.unbind(ipcon)
-    temp.unbind(ipcon)
-    
-    ipcon.disconnect()
+    try: 
+        dButton.unbind(ipcon)
+        hum.unbind(ipcon)
+        temp.unbind(ipcon)
+    except:
+        print("Unable to reset. ")
+
+    try:
+        ipcon.disconnect()
+        print("Disconnected.")
+    except:
+        print("Unable to disconnect. :(")
     
 
 

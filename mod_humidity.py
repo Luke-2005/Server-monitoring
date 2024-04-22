@@ -12,11 +12,16 @@ def getHumidity(ipcon):
     h = BrickletHumidityV2("ViW", ipcon)
     return h.get_humidity()
 
+def bindTemp(ipcon, function):
+    h = BrickletHumidityV2("ViW", ipcon)
+    h.register_callback(h.CALLBACK_TEMPERATURE, function)
+    h.set_temperature_callback_configuration(10000, False, ">", 50 * 100, 500)
+
 #Bind function as Callback
 def bind(ipcon, function):
     h = BrickletHumidityV2("ViW", ipcon)
     h.register_callback(h.CALLBACK_HUMIDITY, function)
-    h.set_humidity_callback_configuration(60000, False, "o", 70*100, 100*100)
+    h.set_humidity_callback_configuration(60000, False, ">", 70*100, 100*100)
     
 def unbind(ipcon):
     h = BrickletHumidityV2("ViW", ipcon)
