@@ -8,3 +8,12 @@ def printTemperature(ipcon):
     temperature = ptc.get_temperature()
     print("Temperature: " + str(temperature/100.0) + " °C")
 
+def getTemperature(ipcon):
+    ptc = BrickletPTCV2("Wcg", ipcon) # Create device object
+    return ptc.get_temperature()
+
+def getTemperatureString(ipcon):
+    ptc = BrickletPTCV2("Wcg", ipcon) # Create device object
+    tempValue = ptc.get_temperature()/100.0
+    tempValue = str(tempValue)
+    return tempValue

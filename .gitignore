@@ -1,4 +1,4 @@
 __pycache__/mod_humidity.cpython-311.pyc
 __pycache__/mod_temperature.cpython-311.pyc
 tinkerforge/__pycache__/*.pyc
-yc
+/__pycache__/*.pyc

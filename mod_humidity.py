@@ -12,3 +12,9 @@ def getHumidity(ipcon):
     h = BrickletHumidityV2("ViW", ipcon)
     return h.get_humidity()
 
+def getHumidityString(ipcon):
+    h = BrickletHumidityV2("ViW", ipcon)
+    return str(h.get_humidity()/100.0)
+
+
+

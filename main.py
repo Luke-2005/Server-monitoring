@@ -5,6 +5,7 @@ PORT = 4223
 from tinkerforge.ip_connection import IPConnection
 import mod_humidity as hum
 import mod_temperature as temp
+import bot as bot
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
@@ -17,12 +18,13 @@ if __name__ == "__main__":
     try:
 
         temp.printTemperature(ipcon)
-
         hum.printHumidity(ipcon)
 
+        tempValue = temp.getTemperatureString(ipcon)+"°C"
+        humValue = hum.getHumidityString(ipcon)+"%"
 
-
-
+        bot.send_msg(str(tempValue))
+        bot.send_msg(str(humValue))
 
 
     except Exception as e:
