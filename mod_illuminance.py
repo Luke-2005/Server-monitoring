@@ -1,7 +1,4 @@
 
-HOST = "172.20.10.242"
-PORT = 4223
-
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_ambient_light_v3 import BrickletAmbientLightV3
 

@@ -47,7 +47,7 @@ def setHumidity(ipcon):
         print(repr(e))
     except: 
         print("Something went wrong.")
-    sd.reset()
+    #sd.reset()
 
 def setTemperature(ipcon):
     sd = BrickletSegmentDisplay4x7V2("Tre", ipcon) 
@@ -69,7 +69,7 @@ def setTemperature(ipcon):
         print(repr(e))
     except: 
         print("Something went wrong.")
-    sd.reset()
+    #sd.reset()
 
 def UpdateDisplay(ipcon, repeat):
     if mode == "T":
