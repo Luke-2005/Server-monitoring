@@ -11,6 +11,7 @@ import mod_rgbButton as rgbButton
 import mod_segDisplay as segDisp
 import sys
 import bot
+import alarm
 
 
 ipcon = ""
@@ -103,6 +104,8 @@ if __name__ == "__main__":
 
         bot.send_msg(str(tempValue))
         bot.send_msg(str(humValue))
+
+        alarm.playAlarm(ipcon)
 
     except Exception as e:
         print(repr(e))
