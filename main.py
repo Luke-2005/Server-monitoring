@@ -71,6 +71,10 @@ if __name__ == "__main__":
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
         dButton.bind(ipcon, callback_DualButton)
+        
+        # rgbButton.setBlue(ipcon)
+        # rgbButton.setColor(ipcon)
+        # rgbButton.cb_button_state_changed(ipcon)
 
 
     except Exception as e:
@@ -83,6 +87,3 @@ if __name__ == "__main__":
 
     dButton.unbind(ipcon)
     ipcon.disconnect()
-    
-
-
