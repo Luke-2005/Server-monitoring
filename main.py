@@ -98,10 +98,11 @@ if __name__ == "__main__":
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
 
+        tempValue = temp.getTemperatureString(ipcon)+"°C"
+        humValue = hum.getHumidityString(ipcon)+"%"
 
-
-
-
+        bot.send_msg(str(tempValue))
+        bot.send_msg(str(humValue))
 
     except Exception as e:
         print(repr(e))
