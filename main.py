@@ -11,6 +11,7 @@ import mod_rgbButton as rgbButton
 import mod_segDisplay as segDisp
 import sys
 import bot
+import alarm
 
 
 ipcon = ""
@@ -110,9 +111,15 @@ if __name__ == "__main__":
 
         tempValue = temp.getTemperatureString(ipcon)+"°C"
         humValue = hum.getHumidityString(ipcon)+"%"
-
+        
         bot.send_msg(str(tempValue))
         bot.send_msg(str(humValue))
+        # rgbButton.setBlue(ipcon)
+        # rgbButton.setColor(ipcon)
+        # rgbButton.cb_button_state_changed(ipcon)
+
+
+        alarm.playAlarm(ipcon)
 
     except Exception as e:
         print(repr(e))
@@ -136,5 +143,3 @@ if __name__ == "__main__":
     except:
         print("Unable to disconnect. :(")
     
-
-
