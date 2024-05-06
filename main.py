@@ -104,12 +104,12 @@ if __name__ == "__main__":
         
         bot.send_msg(str(tempValue))
         bot.send_msg(str(humValue))
-        # rgbButton.setBlue(ipcon)
+        rgbButton.setGreen(ipcon)
         # rgbButton.setColor(ipcon)
         # rgbButton.cb_button_state_changed(ipcon)
 
 
-        alarm.playAlarm(ipcon)
+        # alarm.playAlarm(ipcon)
 
     except Exception as e:
         print(repr(e))

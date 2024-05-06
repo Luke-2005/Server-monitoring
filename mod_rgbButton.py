@@ -2,39 +2,24 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
 
 # Callback function for button state changed callback
-def cb_button_state_changed(state):
-    if state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED:
+def cb_button_state_changed(ipcon, state):
+    if state == BrickletRGBLEDButton("23Qx", ipcon).BUTTON_STATE_PRESSED:
         print("State: Pressed")
-    elif state == BrickletRGBLEDButton.BUTTON_STATE_RELEASED:
+    elif state == BrickletRGBLEDButton("23Qx", ipcon).BUTTON_STATE_RELEASED:
         print("State: Released")
 
+def setGreen(ipcon):
+    rlb = BrickletRGBLEDButton("23Qx", ipcon)
+    rlb.set_color(0, 255, 0)
+
+def setRed(ipcon):
+    rlb = BrickletRGBLEDButton("23Qx", ipcon)
+    rlb.set_color(255, 0, 0)
+
 def setBlue(ipcon):
-    rlb = BrickletRGBLEDButton("XBe", ipcon)
-    # rlb.reset
-    # TODO crashed code pls fix
+    rlb = BrickletRGBLEDButton("23Qx", ipcon)
+    rlb.set_color(0, 0, 255)
 
-    # rlb.get_color()
-    rlb.set_color(0, 170, 234)
-
-    #print(rlb.get_color())
-    #rlb.set_color("blue")
-    print("Button set: blue")
-
-
-
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
- 
-UID = "XBe" # Change XYZ to the UID of your RGB LED Button Bricklet
- 
-from tinkerforge.ip_connection import IPConnection
-from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
- 
-def setColor(ipcon):
-    rlb = BrickletRGBLEDButton(UID, ipcon) # Create device object
-    rlb.reset
-    # Set light blue color
-    rlb.set_color (200, 170, 200)
- 
- 
-    input("Press key to exit\n") # Use raw_input() in Python 2
+def setOrange(ipcon):
+    rlb = BrickletRGBLEDButton("23Qx", ipcon)
+    rlb.set_color(255, 40, 0)
