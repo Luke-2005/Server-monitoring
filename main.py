@@ -99,6 +99,16 @@ if __name__ == "__main__":
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
 
+        print("Binding DualButton Bricklet")
+        dButton.bind(ipcon, callback_DualButton)
+
+        print("Binding Humidity Bricklet")
+        hum.bind(ipcon, callback_humidity)
+        hum.bindTemp(ipcon, callback_humTemp)
+
+        print("Binding Temperature Bricklet")
+        temp.bind(ipcon, callback_temperature)
+
         tempValue = temp.getTemperatureString(ipcon)+"°C"
         humValue = hum.getHumidityString(ipcon)+"%"
         
@@ -119,8 +129,17 @@ if __name__ == "__main__":
 
     input("Press key to exit\n") # Use raw_input() in Python 2
 
-    dButton.unbind(ipcon)
-    ipcon.disconnect()
+    try: 
+        dButton.unbind(ipcon)
+        hum.unbind(ipcon)
+        temp.unbind(ipcon)
+        
+    except:
+        print("Unable to reset. ")
+
+    try:
+        ipcon.disconnect()
+        print("Disconnected.")
+    except:
+        print("Unable to disconnect. :(")
     
-
-

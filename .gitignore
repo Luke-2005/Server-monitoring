@@ -1,2 +1,3 @@
 __pycache__/tinkerforge/__pycache__/*.pyc
 /__pycache__/*.pyc
+tinkerforge/__pycache__/*.pyc
