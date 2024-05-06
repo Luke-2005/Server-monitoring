@@ -10,7 +10,7 @@ def printTemperature(ipcon):
 
 def getTemperature(ipcon):
     ptc = BrickletPTCV2("Wcg", ipcon) # Create device object
-    return ptc.get_temperature()
+    return ptc.get_temperature() / 100
 
 def bind(ipcon, function):
     ptc = BrickletPTCV2("Wcg", ipcon)
