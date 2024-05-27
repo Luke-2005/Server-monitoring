@@ -2,10 +2,14 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_rgb_led_button import BrickletRGBLEDButton
 
 # Callback function for button state changed callback
-def cb_button_state_changed(ipcon, state):
-    if state == BrickletRGBLEDButton("23Qx", ipcon).BUTTON_STATE_PRESSED:
+def cb_button_state_changed(ipcon):
+
+    rlb = BrickletRGBLEDButton("23Qx", ipcon)
+    state = rlb.get_button_state()
+
+    if state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED:
         print("State: Pressed")
-    elif state == BrickletRGBLEDButton("23Qx", ipcon).BUTTON_STATE_RELEASED:
+    elif state == BrickletRGBLEDButton.BUTTON_STATE_RELEASED:
         print("State: Released")
 
 def setGreen(ipcon):
