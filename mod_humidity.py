@@ -10,7 +10,7 @@ def printHumidity(ipcon):
 
 def getHumidity(ipcon):
     h = BrickletHumidityV2("ViW", ipcon)
-    return h.get_humidity()
+    return h.get_humidity() / 100
 
 def bindTemp(ipcon, function):
     h = BrickletHumidityV2("ViW", ipcon)

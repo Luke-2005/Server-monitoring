@@ -3,8 +3,8 @@ from tinkerforge.bricklet_segment_display_4x7_v2 import BrickletSegmentDisplay4x
 import datetime, sched, time
 import mod_humidity as hum
 import mod_temperature as temp
+import asyncio
 
-s = sched.scheduler(time.time, time.sleep)
 mode = "T"; # T for Time, H for humidity, C for Temp
 brightness = 7
 
@@ -71,23 +71,20 @@ def setTemperature(ipcon):
         print("Something went wrong.")
     #sd.reset()
 
-def UpdateDisplay(ipcon, repeat):
-    if mode == "T":
-        setTime(ipcon)
-    elif mode == "H":
-        setHumidity(ipcon)
-    elif mode == "C":
-        setTemperature(ipcon)
-    
-    if repeat:
-        #Do some black magic to adjust for drift - we want to update once a minute, about 
-        #a second after the minute changed...
-        now = time.time()
-        seconds = 60 - int(now % 60)
-        print ("Rescheduled in " + now + " Seconds")
-        s.enter(seconds + 1, 1, UpdateDisplay(ipcon, True), (s, ))
+async def UpdateDisplay(ipcon, repeat):
+    while repeat:
+        if mode == "T":
+            setTime(ipcon)
+        elif mode == "H":
+            setHumidity(ipcon)
+        elif mode == "C":
+            setTemperature(ipcon)
+        
+        if repeat:
+            #Do some black magic to adjust for drift - we want to update once a minute, about 
+            #a second after the minute changed...
+            now = time.time()
+            seconds = 60 - int(now % 60)
+            print ("Rescheduled in " + now + " Seconds")
+            await asyncio.sleep(seconds)
 
-def scheduleUpdates(ipcon):
-    s.enter(60, 1, UpdateDisplay(ipcon, True), (s, ))
-    s.run()
-    

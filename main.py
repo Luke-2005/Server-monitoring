@@ -9,12 +9,17 @@ import mod_temperature as temp
 import mod_dualButton as dButton
 import mod_rgbButton as rgbButton
 import mod_segDisplay as segDisp
+import mod_lcdDisplay as lcdDisp
 import sys
 import bot
 import alarm
+import asyncio
 
 
 ipcon = ""
+lcdDispTask1 = 0
+lcdDispTask2 = 0
+segDispTask = 0
 
 #Booleans
 Watching = False #Alarm Scharf
@@ -93,9 +98,8 @@ if __name__ == "__main__":
         sys.exit()
 
     #exec all our code in try catch, so con gets closed reliably
-    try: # Connect to brickd
-        # Don't use device before ipcon is connected
-
+    try:
+        loop = asyncio.get_event_loop()
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
 
@@ -109,6 +113,21 @@ if __name__ == "__main__":
         print("Binding Temperature Bricklet")
         temp.bind(ipcon, callback_temperature)
 
+        #print("Binding SegDisplay")
+        #segDispTask = loop.create_task(segDisp.UpdateDisplay(ipcon, True))
+
+        print("Binding Display")
+        lcdDisp.bind(ipcon)
+        print("Creating Display Update Task")
+        lcdDispTask2 = loop.create_task(lcdDisp.updateLists(ipcon, True, temp.getTemperature, hum.getHumidity))
+        lcdDispTask1 = loop.create_task(lcdDisp.updateDisplay(ipcon, True)) 
+
+        try:
+            loop.run_until_complete(lcdDispTask2)
+            loop.run_until_complete(lcdDispTask1)
+            #loop.run_until_complete(segDispTask)
+        except asyncio.CancelledError:
+            pass
         tempValue = temp.getTemperatureString(ipcon)+"°C"
         humValue = hum.getHumidityString(ipcon)+"%"
         
@@ -118,27 +137,38 @@ if __name__ == "__main__":
         rgbButton.cb_button_state_changed(ipcon)
 
 
-        # alarm.playAlarm(ipcon)
+        #alarm.playAlarm(ipcon)
+
+
+        input("Press key to exit\n") # Use raw_input() in Python 2
 
     except Exception as e:
         print(repr(e))
     except: 
         print("Something went wrong.")
+    finally:
+        try:
+            lcdDispTask.cancel()
+            print("Repeated Tasks aborted. ")
+        except:
+            print("Unable to stop Task(s). ")
+
+        try: 
+            #dButton.unbind(ipcon)
+            #hum.unbind(ipcon)
+            #temp.unbind(ipcon)
+            lcdDisp.unbind(ipcon)
+            print("Unbound.")
+        except:
+            print("Unable to reset. ")
+
+        try:
+            ipcon.disconnect()
+            print("Disconnected.")
+        except:
+            print("Unable to disconnect. :(")
+
         
 
-    input("Press key to exit\n") # Use raw_input() in Python 2
 
-    try: 
-        dButton.unbind(ipcon)
-        hum.unbind(ipcon)
-        temp.unbind(ipcon)
-        
-    except:
-        print("Unable to reset. ")
-
-    try:
-        ipcon.disconnect()
-        print("Disconnected.")
-    except:
-        print("Unable to disconnect. :(")
     
