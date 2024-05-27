@@ -15,7 +15,7 @@ def setTime(ipcon):
     try:
         strnow = str(now.time())
 
-        print("set SegmentDisplay to " + strnow)
+        print("SegDisp: Set to " + strnow)
 
         sd.set_brightness(brightness)
         sd.set_numeric_value([int(strnow[0]), int(strnow[1]), int(strnow[3]), int(strnow[4])])
@@ -25,7 +25,7 @@ def setTime(ipcon):
     except Exception as e:
         print(repr(e))
     except: 
-        print("Something went wrong.")
+        print("SegDisp: Something went wrong.")
 
 def setHumidity(ipcon):
     sd = BrickletSegmentDisplay4x7V2("Tre", ipcon) 
@@ -46,7 +46,7 @@ def setHumidity(ipcon):
     except Exception as e:
         print(repr(e))
     except: 
-        print("Something went wrong.")
+        print("SegDisp: Something went wrong.")
     #sd.reset()
 
 def setTemperature(ipcon):
@@ -68,23 +68,27 @@ def setTemperature(ipcon):
     except Exception as e:
         print(repr(e))
     except: 
-        print("Something went wrong.")
+        print("SegDisp: Something went wrong.")
     #sd.reset()
 
-async def UpdateDisplay(ipcon, repeat):
+def updateDisplay(ipcon, repeat):
     while repeat:
-        if mode == "T":
-            setTime(ipcon)
-        elif mode == "H":
-            setHumidity(ipcon)
-        elif mode == "C":
-            setTemperature(ipcon)
-        
-        if repeat:
-            #Do some black magic to adjust for drift - we want to update once a minute, about 
-            #a second after the minute changed...
-            now = time.time()
-            seconds = 60 - int(now % 60)
-            print ("Rescheduled in " + now + " Seconds")
-            await asyncio.sleep(seconds)
+        try:
+            if mode == "T":
+                setTime(ipcon)
+            elif mode == "H":
+                setHumidity(ipcon)
+            elif mode == "C":
+                setTemperature(ipcon)
+            
+            if repeat:
+                #Do some black magic to adjust for drift - we want to update once a minute, about 
+                #a second after the minute changed...
+                now = time.time()
+                seconds = 60 - int(now % 60)
+                print ("SegDisp: Rescheduled in " + now + " Seconds")
+                time.sleep(seconds)
+        except:
+            print("SegDisp: Failed UpdateDisplay")
+            return
 

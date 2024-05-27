@@ -13,7 +13,7 @@ import mod_lcdDisplay as lcdDisp
 import sys
 import bot
 import alarm
-import asyncio
+import threading
 
 
 ipcon = ""
@@ -39,7 +39,7 @@ def callback_DualButton(button_l, button_r, led_l, led_r):
 
         print("Cycled to '" + segDisp.mode + "'. Updating")
         if ipcon != "":
-            segDisp.UpdateDisplay(ipcon, False)
+            segDisp.updateDisplay(ipcon, False)
     elif button_l == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
         print("Left Button: Released")
 
@@ -56,7 +56,7 @@ def callback_DualButton(button_l, button_r, led_l, led_r):
 
         print("Cycled to '" + segDisp.mode + "'. Updating")
         if ipcon != "":
-            segDisp.UpdateDisplay(ipcon, False)
+            segDisp.updateDisplay(ipcon, False)
     elif button_r == BrickletDualButtonV2.BUTTON_STATE_RELEASED:
         print("Right Button: Released")
 
@@ -99,9 +99,26 @@ if __name__ == "__main__":
 
     #exec all our code in try catch, so con gets closed reliably
     try:
-        loop = asyncio.get_event_loop()
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
+
+        print("Binding SegDisplay")
+        segDispTask = threading.Thread(target = segDisp.updateDisplay, args=(ipcon, True))
+
+        print("Binding Display")
+        lcdDisp.bind(ipcon)
+        print("Creating Display Update Threads")
+        lcdDispTask2 = threading.Thread(target = lcdDisp.updateLists, args=(ipcon, True, temp.getTemperature, hum.getHumidity))
+        lcdDispTask1 = threading.Thread(target = lcdDisp.updateDisplay, args=(ipcon, True)) 
+
+        try:
+            print("Starting continuous Update Threads")
+            lcdDispTask1.start()
+            lcdDispTask2.start()
+            segDispTask.start()
+            print("Done.")
+        except:
+            print("Unable to start Threads")
 
         print("Binding DualButton Bricklet")
         dButton.bind(ipcon, callback_DualButton)
@@ -113,27 +130,12 @@ if __name__ == "__main__":
         print("Binding Temperature Bricklet")
         temp.bind(ipcon, callback_temperature)
 
-        #print("Binding SegDisplay")
-        #segDispTask = loop.create_task(segDisp.UpdateDisplay(ipcon, True))
-
-        print("Binding Display")
-        lcdDisp.bind(ipcon)
-        print("Creating Display Update Task")
-        lcdDispTask2 = loop.create_task(lcdDisp.updateLists(ipcon, True, temp.getTemperature, hum.getHumidity))
-        lcdDispTask1 = loop.create_task(lcdDisp.updateDisplay(ipcon, True)) 
-
-        try:
-            loop.run_until_complete(lcdDispTask2)
-            loop.run_until_complete(lcdDispTask1)
-            #loop.run_until_complete(segDispTask)
-        except asyncio.CancelledError:
-            pass
         tempValue = temp.getTemperatureString(ipcon)+"°C"
         humValue = hum.getHumidityString(ipcon)+"%"
         
-        bot.send_msg(str(tempValue))
-        bot.send_msg(str(humValue))
-        rgbButton.setGreen(ipcon)
+        #bot.send_msg(str(tempValue))
+        #bot.send_msg(str(humValue))
+        #rgbButton.setGreen(ipcon)
         # rgbButton.setColor(ipcon)
         # rgbButton.cb_button_state_changed(ipcon)
 
@@ -149,7 +151,9 @@ if __name__ == "__main__":
         print("Something went wrong.")
     finally:
         try:
-            lcdDispTask.cancel()
+            lcdDispTask1.stop()
+            lcdDispTask2.stop()
+            segDispTask.stop()
             print("Repeated Tasks aborted. ")
         except:
             print("Unable to stop Task(s). ")
