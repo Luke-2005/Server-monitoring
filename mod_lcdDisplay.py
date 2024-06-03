@@ -6,8 +6,8 @@ import threading
 
 s = sched.scheduler(time.time, time.sleep)
 
-Temperatures = [0]
-Humidities = [0]
+Temperatures = [0, 0, 10, 70, 70, 60, 80, 20, 0]
+Humidities = [0, 0, 30, 40 , 90, 20, 30, 0]
 Alarms = ["Testalarm", "Another"]
 CurrentDisp = 0
 ipconG = 0
@@ -15,7 +15,10 @@ ipconG = 0
 def cb_gui_tab_selected(index):
     print("LCD: Tab change to Index: " + str(index))
     CurrentDisp = index
-    updateDisplay(ipconG, False)
+    if(ipconG != 0):
+        updateDisplay(ipconG)
+    else:
+        print("LCD: Callback has no Connection Variable? Thread is " + str(threading.current_thread().ident))
 
 def cb_touch_gesture(gesture, duration, pressure_max, x_start, x_end, y_start, y_end, age):
     print("LCD: Touch Input received")
@@ -28,7 +31,7 @@ def cb_touch_gesture(gesture, duration, pressure_max, x_start, x_end, y_start, y
             CurrentDisp = 1
             print("LCD: Swipe: 1")
             #setList(ipcon)
-        updateDisplay(ipcon, False)
+        #updateDisplay(ipcon, False)
     elif gesture == BrickletLCD128x64.GESTURE_TOP_TO_BOTTOM:
         print("LCD: Top To Bottom")
     elif gesture == BrickletLCD128x64.GESTURE_BOTTOM_TO_TOP:
@@ -58,7 +61,8 @@ def bind(ipcon):
     setGraphs(ipcon, lcd)
 
     #dirty hacks
-    ipconG = ipcon
+    #ipconG = ipcon
+    #print("LCD: Set ipcon holding variable in Thread " + str(threading.current_thread().ident))
 
 
 def setGraphs(ipcon, lcd):
@@ -74,62 +78,62 @@ def addAlarm(Alarm):
         Alarms.pop(0)
     Alarms.append(Alarm)
 
-def updateLists(ipcon, repeat, Temp, Hum):
-    while repeat:
-        print("LCD: Updating Value Lists")
+def updateLists(ipcon, Temp, Hum):
+    print("LCD: Updating Value Lists")
+    try:
+        if len(Temperatures) >= 100:
+            Temperatures.pop(0)
+        if len(Humidities) >= 100:
+            Humidities.pop(0)
+        Temperatures.append(round(Temp(ipcon)))
+        Humidities.append(round(Hum(ipcon)))
 
-        try:
-            if len(Temperatures) >= 100:
-                Temperatures.pop(0)
-            if len(Humidities) >= 100:
-                Humidities.pop(0)
-            Temperatures.append(round(Temp(ipcon)))
-            Humidities.append(round(Hum(ipcon)))
+        print(Temperatures)
+        print(Humidities)
+    except:
+        print("LCD: Failed updating values.")
+        return
 
-            print(Temperatures)
-            print(Humidities)
-            if repeat: 
-                now = time.time()
-                seconds = 30 - int(now % 30)
-                print ("LCD: Rescheduled in " + str(seconds) + " Seconds")
-                time.sleep(seconds)
-        except:
-            print("LCD: Failed updating values.")
-            return
-
-def updateDisplay(ipcon, repeat):
+def updateDisplay(ipcon):
     lcd = BrickletLCD128x64("24Rh", ipcon) # Create device object
-    while repeat:
+    try:            
+        if CurrentDisp == 0:
+            print("LCD: Updating Graphs")
+            setGraphs(ipcon, lcd)
+        elif CurrentDisp == 1:
+            print("LCD: Updating Alarm List.")
+            index = 0
+            for al in Alarms:
+                lcd.draw_text(1, index * 8, lcd.FONT_6X8, lcd.COLOR_BLACK, al)
+                index += 1
+
+        #Temp
+        lcd.set_gui_graph_data(0, Temperatures)
+        #Hum
+        lcd.set_gui_graph_data(1, Humidities)
+    except:
+        print("LCD: updateDisplay Failed.")
+        return
+
+def repeatUpdate(ipcon, Temp, Hum):
+    print("LCD: Thread ident:")
+    print(str(threading.current_thread().ident))
+    while True:
         try:
             if (ipcon.get_connection_state() != ipcon.CONNECTION_STATE_CONNECTED):
                 print("LCD: Connection dead. Exiting Async Loop")
                 return
-            
-            if CurrentDisp == 1:
-                setGraphs(ipcon, lcd)
-                print("LCD: Updating Graphs")
-            elif CurrentDisp == 1:
-                index = 0
-                print("LCD: Updating Alarm List.")
-                for al in Alarms:
-                    lcd.draw_text(1, index * 8, lcd.FONT_6X8, lcd.COLOR_BLACK, al)
-                    index += 1
-
-            #Temp
-            lcd.set_gui_graph_data(0, Temperatures)
-            #Hum
-            lcd.set_gui_graph_data(1, Humidities)
-            if repeat:
-                now = time.time()
-                seconds = 30 - int(now % 30)
-                print ("LCD: Rescheduled in " + str(seconds) + " Seconds")
-                time.sleep(seconds)
-                #s.enter(seconds + 1, 1, updateDisplay, (ipcon, True, Temp, Hum))
-                #s.run()
+            updateLists(ipcon, Temp, Hum)
+            updateDisplay(ipcon)
+            now = time.time()
+            seconds = 30 - int(now % 30)
+            print ("LCD: Rescheduled in " + str(seconds) + " Seconds")
+            time.sleep(seconds)
+            #s.enter(seconds + 1, 1, updateDisplay, (ipcon, True, Temp, Hum))
+            #s.run()
         except:
-            print("LCD: updateDisplay Failed.")
+            print("LCD: repeat updateDisplay Failed.")
             return
-
 
 def unbind(ipcon):
     lcd = BrickletLCD128x64("24Rh", ipcon) # Create device object
