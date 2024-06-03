@@ -14,6 +14,7 @@ import sys
 import bot
 import alarm
 import threading
+import datetime
 
 
 ipcon = ""
@@ -80,13 +81,21 @@ def callback_temperature(temperature):
 
 def callback_AlertTriggered():
     print("Alarm ausgelöst!")
-    Watching = True
+    Alert = True
 
 
 def callback_AlertEngaged():
     print("Alarm scharf")
-    Alert = True
+    Watching = True
     
+# def callback_rgbButton():
+#     print(datetime.datetime.now().hour)
+#     hour = datetime.datetime.now().hour
+    
+#     if()
+#     if(7 <= hour <= 17):
+#         print('blue')
+
 
 if __name__ == "__main__":
     ipcon = IPConnection() # Create IP connection
@@ -136,7 +145,8 @@ if __name__ == "__main__":
         bot.send_msg(str(tempValue))
         bot.send_msg(str(humValue))
         rgbButton.setGreen(ipcon)
-        rgbButton.setColor(ipcon)
+        callback_rgbButton()
+        # rgbButton.setColor(ipcon)
         rgbButton.cb_button_state_changed(ipcon)
 
 
