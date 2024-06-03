@@ -121,8 +121,8 @@ if __name__ == "__main__":
         segDispTask = threading.Thread(target = segDisp.updateDisplay, args=(ipcon, True))
 
         print("Binding Display")
-        lcdDisp.bind(ipcon)
         lcdDisp.ipconG = ipcon
+        lcdDisp.bind(ipcon)
         print("Creating Display Update Threads")
 
         ipconSec = IPConnection() # Create secondary IP connection for threads
@@ -159,7 +159,7 @@ if __name__ == "__main__":
         bot.send_msg(str(tempValue))
         bot.send_msg(str(humValue))
         rgbButton.setGreen(ipcon)
-        callback_rgbButton()
+        #callback_rgbButton()
         # rgbButton.setColor(ipcon)
         rgbButton.cb_button_state_changed(ipcon)
 

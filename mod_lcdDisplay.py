@@ -116,8 +116,7 @@ def updateDisplay(ipcon):
         return
 
 def repeatUpdate(ipcon, Temp, Hum):
-    print("LCD: Thread ident:")
-    print(str(threading.current_thread().ident))
+    #print("LCD: Thread ident:" + str(threading.current_thread().ident))
     while True:
         try:
             if (ipcon.get_connection_state() != ipcon.CONNECTION_STATE_CONNECTED):
