@@ -26,6 +26,7 @@ def bind(ipcon, function):
 def unbind(ipcon):
     h = BrickletHumidityV2("ViW", ipcon)
     h.reset()
+    
 def getHumidityString(ipcon):
     h = BrickletHumidityV2("ViW", ipcon)
     return str(h.get_humidity()/100.0)

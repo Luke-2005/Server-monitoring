@@ -10,6 +10,7 @@ import mod_dualButton as dButton
 import mod_rgbButton as rgbButton
 import mod_segDisplay as segDisp
 import mod_lcdDisplay as lcdDisp
+import mod_motion as motion
 import sys
 import bot
 import alarm
@@ -20,7 +21,6 @@ import time
 
 ipcon = ""
 lcdDispTask1 = 0
-lcdDispTask2 = 0
 segDispTask = 0
 
 #Booleans
@@ -80,6 +80,11 @@ def callback_temperature(temperature):
         callback_AlertTriggered()
     print("External Temperature above Threshold: " + str(temperature/100.0) + " °C")
 
+def callback_motion():
+    print("Motion Detected.")
+    if(Watching and time(17,00) < time.time() < time(7,00)):
+        callback_AlertTriggered()
+
 def callback_AlertTriggered():
     print("Alarm ausgelöst!")
     Alert = True
@@ -128,6 +133,7 @@ if __name__ == "__main__":
 
     #exec all our code in try catch, so con gets closed reliably
     try:
+        print("Main Thread ident is " + str(threading.current_thread().ident))
         temp.printTemperature(ipcon)
         hum.printHumidity(ipcon)
 
@@ -135,15 +141,20 @@ if __name__ == "__main__":
         segDispTask = threading.Thread(target = segDisp.updateDisplay, args=(ipcon, True))
 
         print("Binding Display")
+        lcdDisp.ipconG = ipcon
         lcdDisp.bind(ipcon)
         print("Creating Display Update Threads")
-        lcdDispTask2 = threading.Thread(target = lcdDisp.updateLists, args=(ipcon, True, temp.getTemperature, hum.getHumidity))
-        lcdDispTask1 = threading.Thread(target = lcdDisp.updateDisplay, args=(ipcon, True)) 
+
+        ipconSec = IPConnection() # Create secondary IP connection for threads
+        try:
+            ipconSec.connect(HOST, PORT)
+        except:
+            print("Unable to connect secondary connection to Server.")
+        lcdDispTask = threading.Thread(target = lcdDisp.repeatUpdate, args=(ipconSec, temp.getTemperature, hum.getHumidity)) 
 
         try:
             print("Starting continuous Update Threads")
-            lcdDispTask1.start()
-            lcdDispTask2.start()
+            lcdDispTask.start()
             segDispTask.start()
             print("Done.")
         except:
@@ -151,6 +162,9 @@ if __name__ == "__main__":
 
         print("Binding DualButton Bricklet")
         dButton.bind(ipcon, callback_DualButton)
+
+        print("Binding Motion Detector Bricklet")
+        motion.bind(ipcon, callback_motion)
 
         print("Binding Humidity Bricklet")
         hum.bind(ipcon, callback_humidity)
@@ -179,16 +193,15 @@ if __name__ == "__main__":
     finally:
         try:
             lcdDispTask1.stop()
-            lcdDispTask2.stop()
             segDispTask.stop()
             print("Repeated Tasks aborted. ")
         except:
             print("Unable to stop Task(s). ")
 
         try: 
-            #dButton.unbind(ipcon)
-            #hum.unbind(ipcon)
-            #temp.unbind(ipcon)
+            dButton.unbind(ipcon)
+            hum.unbind(ipcon)
+            temp.unbind(ipcon)
             lcdDisp.unbind(ipcon)
             print("Unbound.")
         except:
@@ -196,6 +209,7 @@ if __name__ == "__main__":
 
         try:
             ipcon.disconnect()
+            ipconSec.disconnect()
             print("Disconnected.")
         except:
             print("Unable to disconnect. :(")
