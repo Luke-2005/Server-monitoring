@@ -8,9 +8,9 @@ def cb_button_state_changed(ipcon):
     state = rlb.get_button_state()
 
     if state == BrickletRGBLEDButton.BUTTON_STATE_PRESSED:
-        print("State: Pressed")
+        return True
     elif state == BrickletRGBLEDButton.BUTTON_STATE_RELEASED:
-        print("State: Released")
+        return False
 
 def setGreen(ipcon):
     rlb = BrickletRGBLEDButton("23Qx", ipcon)

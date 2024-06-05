@@ -15,6 +15,7 @@ import bot
 import alarm
 import threading
 import datetime
+import time
 
 
 ipcon = ""
@@ -82,19 +83,38 @@ def callback_temperature(temperature):
 def callback_AlertTriggered():
     print("Alarm ausgelöst!")
     Alert = True
-
+    callback_rgbButton(ipcon)
 
 def callback_AlertEngaged():
     print("Alarm scharf")
     Watching = True
-    
-# def callback_rgbButton():
-#     print(datetime.datetime.now().hour)
-#     hour = datetime.datetime.now().hour
-    
-#     if()
-#     if(7 <= hour <= 17):
-#         print('blue')
+
+Alert = True
+def callback_rgbButton(ipcon):
+    global Alert
+    print(datetime.datetime.now().hour)
+    hour = datetime.datetime.now().hour
+
+    # When the Alert is active, waiting for a button press
+    if(Alert):
+        print('RGB-Button set: red')
+        rgbButton.setRed(ipcon)
+
+        while(True):
+            if(rgbButton.cb_button_state_changed(ipcon)):
+                print('RGB-Button set: orange')
+                Alert = False
+                rgbButton.setOrange(ipcon)
+                time.sleep(2.5)
+                callback_rgbButton(ipcon)
+                break
+    # When between 7 & 17 Uhr Alert System active
+    elif(7 <= hour <= 17):
+        print('RGB-Button set: blue')
+        rgbButton.setBlue(ipcon)
+    else:
+        print('RGB-Button set: green')
+        rgbButton.setGreen(ipcon)
 
 
 if __name__ == "__main__":
@@ -144,11 +164,8 @@ if __name__ == "__main__":
         
         bot.send_msg(str(tempValue))
         bot.send_msg(str(humValue))
-        rgbButton.setGreen(ipcon)
-        callback_rgbButton()
-        # rgbButton.setColor(ipcon)
-        rgbButton.cb_button_state_changed(ipcon)
 
+        callback_rgbButton(ipcon)
 
         #alarm.playAlarm(ipcon)
 
