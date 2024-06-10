@@ -82,12 +82,15 @@ def callback_temperature(temperature):
 
 def callback_motion():
     print("Motion Detected.")
-    if(Watching and time(17,00) < time.time() < time(7,00)):
+    # if(Watching and time(17,00) < time.time() < time(7,00)): <-- auskommentiert zum testen innerhalb der Schulzeiten
+    if(True):
         callback_AlertTriggered()
 
 def callback_AlertTriggered():
     print("Alarm ausgelöst!")
+    bot.send_msg('Server Alarm triggered!!!')
     Alert = True
+    alarm.playAlarm(ipcon)
     callback_rgbButton(ipcon)
 
 def callback_AlertEngaged():
@@ -109,6 +112,7 @@ def callback_rgbButton(ipcon):
             if(rgbButton.cb_button_state_changed(ipcon)):
                 print('RGB-Button set: orange')
                 Alert = False
+                alarm.stopAlarm(ipcon)
                 rgbButton.setOrange(ipcon)
                 time.sleep(2.5)
                 callback_rgbButton(ipcon)
@@ -180,8 +184,6 @@ if __name__ == "__main__":
         bot.send_msg(str(humValue))
 
         callback_rgbButton(ipcon)
-
-        #alarm.playAlarm(ipcon)
 
 
         input("Press key to exit\n") # Use raw_input() in Python 2
