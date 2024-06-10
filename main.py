@@ -97,7 +97,6 @@ def callback_AlertEngaged():
     print("Alarm scharf")
     Watching = True
 
-Alert = True
 def callback_rgbButton(ipcon):
     global Alert
     print(datetime.datetime.now().hour)
@@ -118,9 +117,10 @@ def callback_rgbButton(ipcon):
                 callback_rgbButton(ipcon)
                 break
     # When between 7 & 17 Uhr Alert System active
-    elif(7 <= hour <= 17):
+    elif(17 <= hour <= 7):
         print('RGB-Button set: blue')
         rgbButton.setBlue(ipcon)
+        callback_AlertEngaged
     else:
         print('RGB-Button set: green')
         rgbButton.setGreen(ipcon)
