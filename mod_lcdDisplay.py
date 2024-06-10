@@ -6,9 +6,9 @@ import threading
 
 s = sched.scheduler(time.time, time.sleep)
 
-Temperatures = [0, 0, 10, 70, 70, 60, 80, 20, 0]
-Humidities = [0, 0, 30, 40 , 90, 20, 30, 0]
-Alarms = ["Testalarm", "Another"]
+Temperatures = [0, 0]
+Humidities = [0, 0]
+Alarms = ["", "", "", "", ""]
 CurrentDisp = 0
 ipconG = 0
 
@@ -51,13 +51,13 @@ def bind(ipcon):
     lcd.set_touch_gesture_callback_configuration(100, True)
 
     #These should give me callbacks, but apparently doesn't
-    lcd.set_gui_tab_configuration(lcd.CHANGE_TAB_ON_CLICK_AND_SWIPE, True)
-    lcd.register_callback(lcd.CALLBACK_TOUCH_GESTURE, cb_touch_gesture)
-    lcd.register_callback(lcd.CALLBACK_GUI_TAB_SELECTED, cb_gui_tab_selected)
+    #lcd.set_gui_tab_configuration(lcd.CHANGE_TAB_ON_CLICK_AND_SWIPE, True)
+    #lcd.register_callback(lcd.CALLBACK_TOUCH_GESTURE, cb_touch_gesture)
+    #lcd.register_callback(lcd.CALLBACK_GUI_TAB_SELECTED, cb_gui_tab_selected)
 
     #Add Tabs. Switching works without callbacks, apparently
     lcd.set_gui_tab_text(0, "Env")
-    lcd.set_gui_tab_text(1, "Alert")
+    #lcd.set_gui_tab_text(1, "Alert")
     setGraphs(ipcon, lcd)
 
     #dirty hacks
@@ -74,7 +74,7 @@ def setGraphs(ipcon, lcd):
     lcd.set_gui_graph_configuration(1, BrickletLCD128x64.GRAPH_TYPE_LINE, 0, 16, 128, 16, "", "H%");
 
 def addAlarm(Alarm):
-    if len(Alarms) > 5:
+    if len(Alarms) >= 5:
         Alarms.pop(0)
     Alarms.append(Alarm)
 
